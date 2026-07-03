@@ -509,17 +509,16 @@ if (contentPeones) contentPeones.classList.add('hidden');
         // 🆕 Ahora reglamento tiene su propia condición limpia
         document.getElementById('tab-reglamento').classList.add('active');
         document.getElementById('content-reglamento').classList.remove('hidden');
-    } else if (tab === 'mundo') {
+   } else if (tab === 'mundo') {
         // 🆕 Condición para activar la nueva pestaña de Mundo Chess
         document.getElementById('tab-mundo').classList.add('active');
         if (contentMundo) contentMundo.classList.remove('hidden');
     } else if (tab === 'peones') {
-    // ♟️ Condición para activar la pestaña de Peones
-    document.getElementById('tab-peones').classList.add('active');
-    if (contentPeones) contentPeones.classList.remove('hidden');
-    
-    obtenerPeonesDesdeSheets(); // 🔄 ¡Ahora llama a Google Sheets en tiempo real!
-}
+        // ♟️ Condición para activar la pestaña de Peones
+        document.getElementById('tab-peones').classList.add('active');
+        if (contentPeones) contentPeones.classList.remove('hidden');
+        obtenerPeonesDesdeSheets(); // 🔄 ¡Ahora sí va DENTRO del bloque correcto!
+    }
 }
 
         async function fetchPuzzle() {
@@ -969,52 +968,45 @@ function cargarPestañaPeones() {
         `;
     });
 }
-                // Función para leer los datos en tiempo real desde tu Google Sheets (Pestaña "Peones")
+                // Función para leer los datos en tiempo real desde tu Google Sheets (Pestaña "")
 function obtenerPeonesDesdeSheets() {
-    // ⚠️ CAMBIA ESTO: Pon aquí el ID real de tu Google Sheets (el churro largo de letras y números de tu URL)
+    // ⚠️ Recuerda poner aquí el ID largo de tu Google Sheets real
     const sheetId = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vReAtmi9EDc0oex--IYg1mNqfvNPcnOfFNvUtQReG3wlYJYdRdIqWihUFniTyHiw2gymJO-i-zrwd4N/pub?gid=1029613662&single=true&output=csv'; 
     const baseUtl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?sheet=Peones`;
 
     fetch(baseUtl)
         .then(res => res.text())
         .then(data => {
-            // Limpiamos el texto raro que devuelve Google para transformarlo en datos limpios
             const jsonString = data.substring(data.indexOf("google.visualization.Query.setResponse(") + 38, data.length - 2);
             const jsonData = JSON.parse(jsonString);
             const filas = jsonData.table.rows;
 
-            // Vaciamos la lista antigua para meter los datos frescos del Sheets
             infoPeonesData.length = 0;
 
-            // Recorremos cada fila del Sheets mapeando tus columnas exactas
             filas.forEach(fila => {
-                const c = fila.c; // 'c' son las celdas de la fila
-
-                // Nos saltamos la columna A (c[0]) y la B (c[1]). ¡Empezamos en la C!
+                const c = fila.c;
                 infoPeonesData.push({
-                    nombre:       c[2]  ? c[2].v  : '', // Columna C: Nombre y Apellidos
-                    nickGrupo:    c[3]  ? c[3].v  : '', // Columna D: Nick del Grupo
-                    lichess:      c[4]  ? c[4].v  : '', // Columna E: Nick de Lichess
-                    telefono:     c[5]  ? c[5].v  : '', // Columna F: Teléfono (WhatsApp)
-                    ciudad:       c[6]  ? c[6].v  : '', // Columna G: Ciudad / Localidad
-                    empezo:       c[7]  ? c[7].v  : '', // Columna H: ¿Desde cuándo juegas...?
-                    modalidad:    c[8]  ? c[8].v  : '', // Columna I: ¿Cuál es tu modalidad favorita?
-                    piezas:       c[9]  ? c[9].v  : '', // Columna J: En el tablero... ¿preferencias?
-                    apertura:     c[10] ? c[10].v : '', // Columna K: ¿Tienes alguna apertura...?
-                    estiloFrase:  c[11] ? c[11].v : '', // Columna L: Define tu estilo en UNA SOLA FRASE
-                    dias:         c[12] ? c[12].v : '', // Columna M: Días de la semana preferidos
-                    horarios:     c[13] ? c[13].v : '', // Columna N: Horarios habituales
-                    hobbies:      c[14] ? c[14].v : '', // Columna O: ¿Cuáles son tus mayores hobbies...?
-                    presentacion: c[15] ? c[15].v : ''  // Columna P: Si lo prefieres haz una presentación
+                    nombre:       c[2]  ? c[2].v  : '',
+                    nickGrupo:    c[3]  ? c[3].v  : '',
+                    lichess:      c[4]  ? c[4].v  : '',
+                    telefono:     c[5]  ? c[5].v  : '',
+                    ciudad:       c[6]  ? c[6].v  : '',
+                    empezo:       c[7]  ? c[7].v  : '',
+                    modalidad:    c[8]  ? c[8].v  : '',
+                    piezas:       c[9]  ? c[9].v  : '',
+                    apertura:     c[10] ? c[10].v : '',
+                    estiloFrase:  c[11] ? c[11].v : '',
+                    dias:         c[12] ? c[12].v : '',
+                    horarios:     c[13] ? c[13].v : '',
+                    hobbies:      c[14] ? c[14].v : '',
+                    presentacion: c[15] ? c[15].v : ''
                 });
             });
 
-            // Una vez que ha terminado de cargar los datos reales, pintamos las tarjetas
             cargarPestañaPeones();
         })
-        .catch(error => console.error("Error cargando los peones desde Google Sheets:", error));
+        .catch(error => console.error("Error cargando los peones:", error));
 }
-
 // Función para abrir la ventana modal con toda la información
 function verFichaCompleta(index) {
     const peon = infoPeonesData[index];
