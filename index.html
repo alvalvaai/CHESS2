@@ -515,9 +515,15 @@ if (contentPeones) contentPeones.classList.add('hidden');
         // ♟️ Condición para activar la pestaña de Peones
         document.getElementById('tab-peones').classList.add('active');
         if (contentPeones) contentPeones.classList.remove('hidden');
-        obtenerPeonesDesdeSheets(); // 🔄 ¡Ahora sí va DENTRO del bloque correcto!
+        
+        // Ejecutamos la carga de forma segura directamente aquí
+        if (typeof obtenerPeonesDesdeSheets === 'function') {
+            obtenerPeonesDesdeSheets();
+        } else {
+            console.log("Falta cargar la función de Peones, usamos los datos de respaldo");
+            cargarPestañaPeones(); 
+        }
     }
-}
 
         async function fetchPuzzle() {
             try {
