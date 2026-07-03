@@ -479,6 +479,76 @@
             await loadSheetCore();
         });
 
+        // ========================================================
+// ♟️ SECCIÓN DE CONTROL DE PEONES (PUESTA ARRIBA DEL TODO)
+// ========================================================
+const infoPeonesData = [];
+
+function obtenerPeonesDesdeSheets() {
+    const urlCSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vReAtmi9EDc0oex--IYg1mNqfvNPcnOfFNvUtQReG3wlYJYdRdIqWihUFniTyHiw2gymJO-i-zrwd4N/pub?gid=1029613662&single=true&output=csv'; 
+
+    fetch(urlCSV)
+        .then(res => res.text())
+        .then(csvTexto => {
+            const lineas = csvTexto.split(/\r?\n/);
+            infoPeonesData.length = 0;
+
+            for (let i = 1; i < lineas.length; i++) {
+                if (!lineas[i].trim()) continue;
+                const c = lineas[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || lineas[i].split(',');
+                const limpiar = (texto) => texto ? texto.replace(/^"|"$/g, '').trim() : '';
+
+                infoPeonesData.push({
+                    nombre:       limpiar(c[2]),
+                    nickGrupo:    limpiar(c[3]),
+                    lichess:      limpiar(c[4]),
+                    telefono:     limpiar(c[5]),
+                    ciudad:       limpiar(c[6]),
+                    empezo:       limpiar(c[7]),
+                    modalidad:    limpiar(c[8]),
+                    piezas:       limpiar(c[9]),
+                    apertura:     limpiar(c[10]),
+                    estiloFrase:  limpiar(c[11]),
+                    dias:         limpiar(c[12]),
+                    horarios:     limpiar(c[13]),
+                    hobbies:      limpiar(c[14]),
+                    presentacion: limpiar(c[15])
+                });
+            }
+            cargarPestañaPeones();
+        })
+        .catch(error => console.error("Error cargando los peones desde el CSV:", error));
+}
+
+function cargarPestañaPeones() {
+    const grid = document.getElementById('grid-peones');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    infoPeonesData.forEach((peon, index) => {
+        grid.innerHTML += `
+            <div class="bg-white rounded-xl border border-stone-200 p-4 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
+                <div class="flex items-start gap-3">
+                    <div class="w-12 h-12 rounded-full bg-stone-100 flex items-center justify-center text-xl shadow-inner border border-stone-200">
+                        ♟️
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-black text-stone-800 text-sm truncate">${peon.nombre || 'Sin nombre'}</h4>
+                        <p class="text-xs text-amber-600 font-bold font-mono">@${peon.nickGrupo || 'peon'}</p>
+                        <p class="text-[11px] text-stone-400 mt-1 italic line-clamp-2">"${peon.estiloFrase || 'Sin frase definida.'}"</p>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between">
+                    <span class="text-[10px] text-stone-500 font-medium">📍 ${peon.ciudad || 'Desconocida'}</span>
+                    <button onclick="verFichaCompleta(${index})" class="bg-stone-900 hover:bg-stone-800 text-white text-[11px] font-bold px-3 py-1.5 rounded-md transition-colors shadow-xs">
+                        Ver Ficha
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+}
+// ========================================================
        function switchTab(tab) {
     // 1. Quitamos el estado activo de TODOS los botones de pestañas
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active', 'text-white', 'bg-stone-800'));
@@ -921,90 +991,7 @@ rows.forEach((r, index) => {
                 document.querySelector('#table-chesspions tbody').innerHTML = buildTableHTML(chesspionsRows, true);
                 document.querySelector('#table-chesscond tbody').innerHTML = buildTableHTML(chesscondRows, false);
 
-         // --- NUEVA SECCIÓN DE PEONES ---
-
-// Lista donde se guardarán los jugadores (empieza vacía y se llena desde tu Sheets)
-const infoPeonesData = [];
-
-// Función para leer los datos en tiempo real desde tu enlace de Google Sheets publicado
-function obtenerPeonesDesdeSheets() {
-    // Usamos directamente tu enlace CSV publicado de la pestaña Peones
-    const urlCSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vReAtmi9EDc0oex--IYg1mNqfvNPcnOfFNvUtQReG3wlYJYdRdIqWihUFniTyHiw2gymJO-i-zrwd4N/pub?gid=1029613662&single=true&output=csv'; 
-
-    fetch(urlCSV)
-        .then(res => res.text())
-        .then(csvTexto => {
-            // Dividimos el texto por filas
-            const lineas = csvTexto.split(/\r?\n/);
-            
-            // Vaciamos la lista para meter los datos nuevos
-            infoPeonesData.length = 0;
-
-            // Empezamos en la línea 1 para saltarnos los títulos de las columnas (la línea 0)
-            for (let i = 1; i < lineas.length; i++) {
-                if (!lineas[i].trim()) continue;
-
-                // Troceamos la línea respetando las comillas del CSV
-                const c = lineas[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || lineas[i].split(',');
-                
-                // Limpiamos las comillas que añade Google automáticamente al texto
-                const limpiar = (texto) => texto ? texto.replace(/^"|"$/g, '').trim() : '';
-
-                // Mapeamos tus columnas exactas (C es el índice 2, D el 3...)
-                infoPeonesData.push({
-                    nombre:       limpiar(c[2]),
-                    nickGrupo:    limpiar(c[3]),
-                    lichess:      limpiar(c[4]),
-                    telefono:     limpiar(c[5]),
-                    ciudad:       limpiar(c[6]),
-                    empezo:       limpiar(c[7]),
-                    modalidad:    limpiar(c[8]),
-                    piezas:       limpiar(c[9]),
-                    apertura:     limpiar(c[10]),
-                    estiloFrase:  limpiar(c[11]),
-                    dias:         limpiar(c[12]),
-                    horarios:     limpiar(c[13]),
-                    hobbies:      limpiar(c[14]),
-                    presentacion: limpiar(c[15])
-                });
-            }
-
-            // Una vez cargados los datos reales, pintamos las tarjetas en la web
-            cargarPestañaPeones();
-        })
-        .catch(error => console.error("Error cargando los peones desde el CSV:", error));
-}
-
-// Función para pintar las tarjetas en la cuadrícula de la pestaña
-function cargarPestañaPeones() {
-    const grid = document.getElementById('grid-peones');
-    if (!grid) return;
-    grid.innerHTML = '';
-
-    infoPeonesData.forEach((peon, index) => {
-        grid.innerHTML += `
-            <div class="bg-white rounded-xl border border-stone-200 p-4 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
-                <div class="flex items-start gap-3">
-                    <div class="w-12 h-12 rounded-full bg-stone-100 flex items-center justify-center text-xl shadow-inner border border-stone-200">
-                        ♟️
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h4 class="font-black text-stone-800 text-sm truncate">${peon.nombre || 'Sin nombre'}</h4>
-                        <p class="text-xs text-amber-600 font-bold font-mono">@${peon.nickGrupo || 'peon'}</p>
-                        <p class="text-[11px] text-stone-400 mt-1 italic line-clamp-2">"${peon.estiloFrase || 'Sin frase definida.'}"</p>
-                    </div>
-                </div>
-                
-                <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between">
-                    <span class="text-[10px] text-stone-500 font-medium">📍 ${peon.ciudad || 'Desconocida'}</span>
-                    <button onclick="verFichaCompleta(${index})" class="bg-stone-900 hover:bg-stone-800 text-white text-[11px] font-bold px-3 py-1.5 rounded-md transition-colors shadow-xs">
-                        Ver Ficha
-                    </button>
-                </div>
-            </div>
-        `;
-    });
-}
+        
 
 // OJO: Esta función te faltaba y es imprescindible para abrir la Ficha al hacer clic
 function verFichaCompleta(index) {
