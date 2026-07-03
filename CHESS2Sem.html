@@ -55,7 +55,7 @@
             
             <button id="tab-mundo" onclick="switchTab('mundo')" class="tab-btn text-stone-400 hover:text-stone-200 px-3 py-2 rounded-xl font-bold text-xs transition uppercase tracking-wider text-center block">🌍 Mundo Chess</button>
 
-            <button id="tab-peones" onclick="switchTab('peones')" class="tab-btn text-stone-400 hover:text-stone-200 px-3 py-2 rounded-xl font-bold text-xs transition uppercase tracking-wider text-center block">📇 Peones</button>
+            <button id="tab-peones" onclick="switchTab('peones')" class="tab-btn text-stone-400 hover:text-stone-200 px-3 py-2 rounded-xl font-bold text-xs transition uppercase tracking-wider text-center block">♟️ Peones</button>
 
             <button id="tab-reglamento" onclick="switchTab('reglamento')" class="tab-btn text-stone-400 hover:text-stone-200 px-3 py-2 rounded-xl font-bold text-xs transition uppercase tracking-wider text-center block">📜 Reglamento</button>
         </div>
@@ -188,7 +188,7 @@
         <div class="bg-lichess-card rounded-2xl shadow-xl p-6 border border-stone-400">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-stone-300 pb-3 mb-4">
                 <h2 class="text-xl font-black text-stone-900 flex items-center gap-2">
-                    📇 Peones — Conoce a los Participantes
+                    ♟️ Peones — Conoce a los Participantes
                 </h2>
                 <input id="peones-search" type="text" placeholder="🔍 Buscar por nombre o nick..." class="w-full sm:w-72 px-4 py-2 rounded-xl border border-stone-300 bg-white text-sm text-stone-800 focus:outline-none focus:ring-2 focus:ring-amber-700">
             </div>
@@ -411,7 +411,7 @@
         let datesMap = {};
         let resumenIAData = "";
         let chesspionsRows = [], chesscondRows = [];
-        let peonesData = []; // 📇 Fichas de participantes (respuestas del Google Form)
+        let peonesData = []; // ♟️ Fichas de participantes (respuestas del Google Form)
         let peonesSearchListenerAttached = false;
 
         window.addEventListener('DOMContentLoaded', async () => {
@@ -441,7 +441,7 @@
     const contentMundo = document.getElementById('content-mundo-chess');
     if (contentMundo) contentMundo.classList.add('hidden');
 
-    // 📇 Ocultamos el contenedor de Peones
+    // ♟️ Ocultamos el contenedor de Peones
     const contentPeones = document.getElementById('content-peones');
     if (contentPeones) contentPeones.classList.add('hidden');
 
@@ -461,7 +461,7 @@
         document.getElementById('tab-mundo').classList.add('active');
         if (contentMundo) contentMundo.classList.remove('hidden');
     } else if (tab === 'peones') {
-        // 📇 Condición para activar la nueva pestaña de Peones
+        // ♟️ Condición para activar la nueva pestaña de Peones
         document.getElementById('tab-peones').classList.add('active');
         if (contentPeones) contentPeones.classList.remove('hidden');
     }
@@ -621,7 +621,7 @@
                 // ==========================================================
 
                 // ==========================================================
-                // 📇 LÓGICA: OBTENER FICHAS DE PARTICIPANTES DESDE LA PESTAÑA "Peones"
+                // ♟️ LÓGICA: OBTENER FICHAS DE PARTICIPANTES DESDE LA PESTAÑA "Peones"
                 // (Respuestas del Google Form de bienvenida)
                 // ==========================================================
                 try {
